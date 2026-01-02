@@ -50,7 +50,7 @@ function RankingTooltip({
 }
 
 /* 선택 카테고리 타입 */
-type PeriodType = "daily" | "weekly" | "monthly" | "3months" | "yearly";
+type PeriodType = "weekly" | "monthly" | "yearly";
 type CategoryType =
   | "overall"
   | "lipcare"
@@ -146,11 +146,9 @@ const generateAmazonRankings = () => {
 ======================= */
 
 const periodConfigs = {
-  daily: { label: "일간", points: 24 },
-  weekly: { label: "주간", points: 7 },
-  monthly: { label: "월별", points: 30 },
-  "3months": { label: "3개월", points: 90 },
-  yearly: { label: "연도별", points: 12 },
+  weekly: { label: "이번 주", points: 7 },
+  monthly: { label: "이번 달", points: 30 },
+  yearly: { label: "올해", points: 12 },
 };
 
 /* =======================
@@ -327,7 +325,7 @@ export function RankingHistory({
               </tr>
             </thead>
             <tbody>
-              {filteredRankings.slice(0, 100).map((p) => {
+              {filteredRankings.slice(0, 30).map((p) => {
                 const change = p.prevRank - p.rank;
                 return (
                   <tr
@@ -377,7 +375,7 @@ export function RankingHistory({
             onAdd={() =>
               addToCart({
                 type: "chart",
-                title: `${selectedProduct} 순위 추이`,
+                title: `${periodConfigs[period].label} ${selectedProduct} 순위 추이`,
                 data: chartData,
                 page: "ranking",
                 uniqueKey: `ranking-chart-${selectedProduct}-${period}`,
@@ -400,17 +398,17 @@ export function RankingHistory({
           />
         </div>
 
-        {/* ===== Category Filter ===== */}
-        <div className="ranking-chart__category">
-          {(Object.keys(categoryConfigs) as CategoryType[]).map((cat) => (
+        {/* ===== Period Filter ===== */}
+        <div className="ranking-chart__period">
+          {(Object.keys(periodConfigs) as PeriodType[]).map((p) => (
             <button
-              key={cat}
-              className={`ranking-chart__category-btn ${
-                selectedCategory === cat ? "is-active" : ""
+              key={p}
+              className={`ranking-chart__period-btn ${
+                period === p ? "is-active" : ""
               }`}
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => setPeriod(p)}
             >
-              {categoryConfigs[cat].label}
+              {periodConfigs[p].label}
             </button>
           ))}
         </div>
@@ -459,7 +457,7 @@ export function RankingHistory({
         {/* ===== Selected Product Info ===== */}
         <div className="ranking-chart__product-info">
           <h3>{selectedProduct}</h3>
-          <p>주간 카테고리별 순위 변동</p>
+          <p>{periodConfigs[period].label} {selectedProduct} 순위 변동</p>
         </div>
 
         {/* ===== Chart ===== */}
@@ -488,7 +486,11 @@ export function RankingHistory({
                 content={<RankingTooltip />}
                 cursor={{ stroke: "#c7d4ff", strokeWidth: 1 }}
               />
-              <Legend verticalAlign="top" align="right" wrapperStyle={{ top: -10 }}/>
+              <Legend
+                verticalAlign="top"
+                align="right"
+                wrapperStyle={{ top: -10 }}
+              />
 
               {categoryKeys.map((cat, i) => (
                 <Line
