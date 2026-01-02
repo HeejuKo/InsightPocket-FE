@@ -28,7 +28,7 @@ import { ProductDetailTable } from "./DashProductDetailTable";
 import { useState, useEffect } from "react";
 
 // API
-import { fetchTop5Bestsellers, fetchTop1BestSeller } from "../api/dashboard";
+import { fetchTop5Bestsellers, fetchTop1BestSeller, fetchRisingProduct } from "../api/dashboard";
 import type {
   BestSellerItemRaw,
   Top1BestSellerItemRaw,
@@ -121,6 +121,8 @@ export function Dashboard({
   const [loading, setLoading] = useState(true);
   const month = getCurrentMonth();
 
+  const [risingProduct, setRisingProduct] = useState<any>(null);
+
   // [1] 베스트셀러 top5 데이터 로드
   useEffect(() => {
     async function load() {
@@ -165,6 +167,20 @@ export function Dashboard({
 
     loadTop1();
   }, [month]);
+
+  // [4] 급상승 제품 데이터 로드
+  useEffect(() => {
+    async function loadRising() {
+      try {
+        const product = await fetchRisingProduct();
+        setRisingProduct(product);
+      } catch (e) {
+        console.error("rising fetch error", e);
+      }
+    }
+
+    loadRising();
+  }, []);
 
   return (
     <div className="dashboard">
@@ -226,23 +242,21 @@ export function Dashboard({
           />
         )}
 
-        <StatCard
-          variant="product"
-          label="급상승한 제품"
-          title="Water Bank Moisture Cream"
-          value="" // 타입 유지용
-          change="" // 타입 유지용
-          trend="up" // 타입 유지용
-          icon={null}
-          imageUrl="https://m.media-amazon.com/images/I/81u4d6Pn6JL._SX466_.jpg"
-          rating={4.5}
-          reviewCount={1876}
-          change="47%"
-          uniqueKey="stat-month-product-2"
-          addToCart={addToCart}
-          removeByUniqueKey={removeByUniqueKey}
-          isInCart={isInCart}
-        />
+        {risingProduct && (
+          <StatCard
+            variant="product"
+            label="급상승한 제품"
+            title={risingProduct.title}
+            imageUrl={risingProduct.imageUrl}
+            rating={risingProduct.rating}
+            reviewCount={risingProduct.reviewCount}
+            growth={risingProduct.growth}
+            uniqueKey="stat-product-rising"
+            addToCart={addToCart}
+            removeByUniqueKey={removeByUniqueKey}
+            isInCart={isInCart}
+          />
+        )}
       </section>
 
       {/* Sales Chart */}
@@ -482,7 +496,7 @@ function StatCard({
         <div
           className={`stat-card__badge ${trend === "up" ? "is-down" : "is-up"}`}
         >
-          {trend === "up" ? "↓": "↑"} 순위 {growth}
+          {trend === "up" ? "↓" : "↑"} {growth}
         </div>
       </div>
 
