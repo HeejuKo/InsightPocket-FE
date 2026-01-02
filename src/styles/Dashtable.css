@@ -154,11 +154,11 @@ td.change {
   font-weight: 600;
 }
 
-td.change.up {
+td.change.down {
   color: #FF2F36;
 }
 
-td.change.down {
+td.change.up {
   color: #13C85E;
 }
 

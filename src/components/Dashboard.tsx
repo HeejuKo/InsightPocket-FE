@@ -30,7 +30,7 @@ import { useState, useEffect } from "react";
 // API
 import { fetchTop5Bestsellers } from "../api/dashboard";
 import type { BestSellerItemRaw } from "../types/api/dashboard";
-import type { BestSellerTop5Row } from "../types/dashboard";
+import type { BestSellerTop5Row, ProductDetailRow } from "../types/dashboard";
 
 interface DashboardProps {
   addToCart: (item: Omit<InsightItem, "id" | "timestamp">) => void;
@@ -100,15 +100,44 @@ export function Dashboard({
     }));
   }
 
+  function mapProductDetail(raw: BestSellerItemRaw[]): ProductDetailRow[] {
+  return raw.map((item) => ({
+    rank: item.rank,
+    name: item.product_name,
+    sales: item.last_month_sales,
+    prevRank: item.prev_month_rank,
+    rankChange: item.rank_change,
+  }));
+}
+
   const [top5Rows, setTop5Rows] = useState<BestSellerTop5Row[]>([]);
+  const [detailRows, setDetailRows] = useState<ProductDetailRow[]>([]);
   const [loading, setLoading] = useState(true);
   const month = getCurrentMonth();
 
+  // [1] 베스트셀러 top5 데이터 로드
   useEffect(() => {
     async function load() {
       try {
         const res = await fetchTop5Bestsellers(month);
         setTop5Rows(mapTop5(res.items));
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, []);
+
+  // [2] 제품별 상세 현황 데이터 로드
+  useEffect(() => {
+    async function load() {
+      try {
+        const month = getCurrentMonth();
+        const res = await fetchTop5Bestsellers(month);
+
+        setTop5Rows(mapTop5(res.items));
+        setDetailRows(mapProductDetail(res.items));
       } finally {
         setLoading(false);
       }
@@ -310,6 +339,8 @@ export function Dashboard({
       />
 
       <ProductDetailTable
+        data={detailRows}
+        loading={loading}
         addToCart={addToCart}
         removeByUniqueKey={removeByUniqueKey}
         isInCart={isInCart}

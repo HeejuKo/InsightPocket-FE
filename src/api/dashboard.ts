@@ -1,6 +1,7 @@
 // src/api/dashboard.ts
 import { API_BASE_URL } from "../config/api";
 
+// [1] Dash-베스트셀러 top5 목록
 export interface BestSellerItemRaw {
   rank: number;
   product_id: number;
@@ -37,4 +38,26 @@ export async function fetchTop5Bestsellers(month: string) {
   }
 
   return res.json();
+}
+
+
+// [2] Dash-베스트셀러 top5 세부정보
+export interface ProductDetailRow {
+  rank: number;
+  name: string;
+  sales: number;
+  prevRank: number;
+  rankChange: number;
+}
+
+function mapProductDetail(
+  raw: BestSellerItemRaw[]
+): ProductDetailRow[] {
+  return raw.map((item) => ({
+    rank: item.rank,
+    name: item.product_name,
+    sales: item.last_month_sales,
+    prevRank: item.prev_month_rank,
+    rankChange: item.rank_change,
+  }));
 }

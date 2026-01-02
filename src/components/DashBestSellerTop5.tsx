@@ -21,6 +21,13 @@ export function BestSellerTop5({
     <TableCard
       title="지난 달 베스트 셀러 TOP 5"
       uniqueKey="dashboard-table-top5"
+      cartPayload={{
+        type: "table",
+        title: "지난 달 베스트 셀러 TOP 5",
+        data, // ← BestSellerTop5에 내려온 data 그대로
+        page: "dashboard",
+        uniqueKey: "dashboard-table-top5",
+      }}
       addToCart={addToCart}
       removeByUniqueKey={removeByUniqueKey}
       isInCart={isInCart}
