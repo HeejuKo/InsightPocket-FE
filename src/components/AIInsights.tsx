@@ -9,6 +9,11 @@ import {
   fetchTop5Bestsellers,
   mapTop5ToAILines,
 } from "../api/dashboard";
+import {
+  fetchCurrentRanking,
+  mapCurrentRankingToAILines,
+  AMAZON_CATEGORY_ID_MAP,
+} from "../api/rankings";
 
 /* ================= Types ================= */
 
@@ -64,7 +69,14 @@ const categoryBestsellerData: AISelectableData[] = (
   title: `아마존 ${label} 베스트셀러 순위`,
   page: "ranking",
   type: "table",
-  fetchContext: async () => await fetchAmazonBestSellerAIContext(category),
+  fetchContext: async () => {
+    const categoryId = AMAZON_CATEGORY_ID_MAP[category];
+    console.log("category key:", category);
+    console.log("category id:", categoryId);
+    const res = await fetchCurrentRanking(categoryId);
+
+    return mapCurrentRankingToAILines(category, res);
+  },
 }));
 
 const allAvailableData: AISelectableData[] = [
@@ -172,6 +184,26 @@ function getCurrentYearMonth(): string {
   return `${year}-${month}`;
 }
 
+// title 정제 함수
+function normalizeAITitle(title: string): string {
+  return title
+    .replace(
+      /아마존\s+(전체|립 케어|스킨 케어|립 메이크업|페이스 파우더)\s+/,
+      "아마존 "
+    )
+    .trim();
+}
+
+// title 정제 분기 함수
+function getAITitle(item: AISelectableData): string {
+  if (item.page === "ranking" && item.title.includes("베스트셀러 순위")) {
+    return normalizeAITitle(item.title);
+  }
+
+  // 그 외는 그대로
+  return item.title;
+}
+
 /* ================= Component ================= */
 
 export function AIInsights({ cartItems }: { cartItems: InsightItem[] }) {
@@ -239,7 +271,7 @@ export function AIInsights({ cartItems }: { cartItems: InsightItem[] }) {
           const raw = await item.fetchContext();
 
           return {
-            title: item.title,
+            title: getAITitle(item),
             lines: normalizeContextToLines(raw),
           };
         })

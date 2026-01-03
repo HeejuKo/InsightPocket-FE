@@ -16,6 +16,15 @@ export interface CurrentRankingResponse {
   items: RankingItemRaw[];
 }
 
+export const AMAZON_CATEGORY_ID_MAP: Record<AmazonCategory, number> = {
+  all_beauty: 1,
+  lip_care: 2,
+  skin_care: 3,
+  lip_makeup: 4,
+  face_powder: 5,
+};
+
+
 export async function fetchCurrentRanking(categoryId: number) {
   const res = await fetch(
     `${API_BASE_URL}/api/rankings/current?category=${categoryId}`
@@ -26,6 +35,36 @@ export async function fetchCurrentRanking(categoryId: number) {
   }
 
   return res.json() as Promise<CurrentRankingResponse>;
+}
+
+// AI 전달용: 현재 랭킹 → lines
+export function mapCurrentRankingToAILines(
+  categoryKey: string,
+  data: CurrentRankingResponse
+): string[] {
+  const lines: string[] = [];
+
+  lines.push(`category: ${categoryKey}`);
+  lines.push(`snapshot_time: ${data.snapshot_time}`);
+
+  data.items.forEach((item) => {
+    const name = item.product_name
+      .split(/[-–:+|]/)[0]
+      .trim();
+
+    const rankChange =
+      item.rank_change > 0
+        ? `+${item.rank_change}`
+        : `${item.rank_change}`;
+
+    lines.push(
+      `rank ${item.rank}: ${name} | ` +
+        `is_laneige ${item.is_laneige} | ` +
+        `rank_change ${rankChange}`
+    );
+  });
+
+  return lines;
 }
 
 // [2] 아마존 라네즈 제품 리스트 조회
