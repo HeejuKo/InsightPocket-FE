@@ -59,7 +59,8 @@ function RankingTooltip({
   active,
   payload,
   label,
-}: TooltipProps<number, string>) {
+  period,
+}: TooltipProps<number, string> & { period: PeriodType }) {
   if (!active || !payload || payload.length === 0) return null;
 
   const data = payload[0].payload;
@@ -67,23 +68,19 @@ function RankingTooltip({
   return (
     <div className="ranking-tooltip">
       <div className="ranking-tooltip__date">
-        {formatXAxisDate(label, period)}
+        {formatXAxisDate(String(label), period)}
       </div>
 
       {payload[0].dataKey === "overallRank" && (
         <div>
-          <div className="ranking-tooltip__category">
-            {data.overallCategory}
-          </div>
+          <div className="ranking-tooltip__category">{data.overallCategory}</div>
           <div className="ranking-tooltip__rank">{data.overallRank}위</div>
         </div>
       )}
 
       {payload[0].dataKey === "categoryRank" && (
         <div>
-          <div className="ranking-tooltip__category">
-            {data.categoryCategory}
-          </div>
+          <div className="ranking-tooltip__category">{data.categoryCategory}</div>
           <div className="ranking-tooltip__rank">{data.categoryRank}위</div>
         </div>
       )}
@@ -601,7 +598,7 @@ export function RankingHistory({
                 tickLine={false}
                 reversed={true}
               />
-              <Tooltip content={<RankingTooltip />} cursor={false} />
+              <Tooltip content={<RankingTooltip period={period}/>} cursor={false} />
 
               <Line
                 type="monotone"
