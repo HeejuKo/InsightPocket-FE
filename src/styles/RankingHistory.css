@@ -127,7 +127,7 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  padding: 20px 30px;
+  padding: 15px 30px;
   font-size: 16px;
   font-weight: 500;
   color: #6691FF;
@@ -207,7 +207,7 @@
   white-space: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
-  width: 100%;
+  width: 95%;
   display: block;
 }
 

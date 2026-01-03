@@ -294,7 +294,7 @@ export function RankingHistory({
           <table className="ranking-table">
             <colgroup>
               <col style={{ width: "110px" }} /> {/* 순위 */}
-              <col style={{ width: "140px" }} /> {/* 브랜드 */}
+              <col style={{ width: "150px" }} /> {/* 브랜드 */}
               <col style={{ width: "auto" }} /> {/* 제품명 */}
               <col style={{ width: "130px" }} /> {/* 이전 순위 */}
               <col style={{ width: "130px" }} /> {/* 변동 */}
@@ -350,7 +350,7 @@ export function RankingHistory({
                       )}
                       {item.rank_change < 0 && (
                         <span className="rank-down">
-                          ▼ - {Math.abs(item.rank_change)}
+                          ▼ -{Math.abs(item.rank_change)}
                         </span>
                       )}
                       {item.rank_change === 0 && (
