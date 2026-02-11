@@ -532,8 +532,8 @@ function StatCard({
           onAdd={() =>
             addToCart({
               type: "stat",
-              title,
-              data: { rating, reviewCount, growth },
+              title: label ?? title,
+              data: { rating, reviewCount, growth, productName: title,},
               page: "dashboard",
               uniqueKey,
               meta: {
