@@ -289,8 +289,9 @@ export function Dashboard({
                   page: "dashboard",
                   uniqueKey: "dashboard-chart-monthly-sales",
                   meta: {
-                    kind: uniqueKey, month,
-                  }
+                    kind: "dashboard-chart-monthly-sales",
+                    month,
+                  },
                 })
               }
               onRemove={() =>
@@ -383,6 +384,7 @@ export function Dashboard({
       <BestSellerTop5
         data={top5Rows}
         loading={loading}
+        month={month}
         addToCart={addToCart}
         removeByUniqueKey={removeByUniqueKey}
         isInCart={isInCart}
@@ -391,6 +393,7 @@ export function Dashboard({
       <ProductDetailTable
         data={detailRows}
         loading={loading}
+        month={month}
         addToCart={addToCart}
         removeByUniqueKey={removeByUniqueKey}
         isInCart={isInCart}
