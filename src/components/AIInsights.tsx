@@ -798,8 +798,8 @@ export function AIInsights({ cartItems }: { cartItems: InsightItem[] }) {
                       <div className="ai-data-card__main">
                         <span className="ai-data-card__title">{d.title}</span>
                         <div className="ai-data-card__tags">
-                          <span className="ai-tag">{PAGE_LABEL_MAP[d.page] ?? d.page}</span>
-                          <span className="ai-tag">{ITEM_TYPE_LABEL_MAP[d.type] ?? d.type}</span>
+                          <span className="ai-tag-page">{PAGE_LABEL_MAP[d.page] ?? d.page}</span>
+                          <span className="ai-tag-type">{ITEM_TYPE_LABEL_MAP[d.type] ?? d.type}</span>
                         </div>
                       </div>
                       {selectedData.includes(d.id) && (
@@ -825,8 +825,8 @@ export function AIInsights({ cartItems }: { cartItems: InsightItem[] }) {
                     <div className="ai-data-card__main">
                       <span className="ai-data-card__title">{d.title}</span>
                       <div className="ai-data-card__tags">
-                        <span className="ai-tag">{PAGE_LABEL_MAP[d.page] ?? d.page}</span>
-                        <span className="ai-tag">{ITEM_TYPE_LABEL_MAP[d.type] ?? d.type}</span>
+                        <span className="ai-tag-page">{PAGE_LABEL_MAP[d.page] ?? d.page}</span>
+                        <span className="ai-tag-type">{ITEM_TYPE_LABEL_MAP[d.type] ?? d.type}</span>
                       </div>
                     </div>
                     {selectedData.includes(d.id) && (
