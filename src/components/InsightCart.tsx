@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 
 import { PAGE_LABEL_MAP, ITEM_TYPE_LABEL_MAP } from "../utils/label";
 import { formatExcelTimestamp } from "../utils/date";
+import { buildExcelSheetData } from "../utils/excel/buildExcelSheet";
 
 import { InsightCartItem } from "./InsightCartItem";
 import { InsightCartLoading } from "./InsightCartLoading";
@@ -96,35 +97,18 @@ export function InsightCart({
       );
 
       /* ===== Item Sheets ===== */
-      selectedItems.forEach((item, idx) => {
-        let data: any[][] = [];
+      for (let idx = 0; idx < selectedItems.length; idx++) {
+        const item = selectedItems[idx];
 
-        if (item.type === "stat") {
-          data = [
-            [item.title],
-            ["Value", item.data.value],
-            ["Change", item.data.change],
-            ["Trend", item.data.trend],
-          ];
-        } else if (item.type === "chart") {
-          data = [
-            [item.title],
-            [],
-            Object.keys(item.data[0]),
-            ...item.data.map(Object.values),
-          ];
-        } else if (item.type === "table") {
-          data = [[item.title], [], ...item.data];
-        } else if (item.type === "insight") {
-          data = [[item.title], [], [item.data]];
-        }
+        // 카드별로 현재 데이터를 다시 조회해서 시트 데이터 만들기
+        const data: any[][] = await buildExcelSheetData(item);
 
         XLSX.utils.book_append_sheet(
           wb,
           XLSX.utils.aoa_to_sheet(data),
           `Card_${idx + 1}`
         );
-      });
+      }
 
       /* ===== 파일 저장 ===== */
       const timestamp = formatExcelTimestamp();

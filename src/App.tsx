@@ -11,6 +11,13 @@ const CART_STORAGE_KEY = "insight-pocket-cart-v1";
 
 export type PageType = 'dashboard' | 'ranking' | 'review-analysis' | 'ai-insights' | 'keywords';
 
+export interface InsightMeta {
+  kind: string;
+  month?: string;
+  productId?: number;
+  range?: string;
+}
+
 export interface InsightItem {
   id: string;
   type: 'stat' | 'chart' | 'table' | 'insight';
@@ -19,7 +26,7 @@ export interface InsightItem {
   page: PageType;
   timestamp: Date;
   uniqueKey: string;
-  meta?: Record<string, any>;
+  meta?: InsightMeta;
 }
 
 export default function App() {
