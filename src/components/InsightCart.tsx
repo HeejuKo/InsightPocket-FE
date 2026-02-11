@@ -272,7 +272,7 @@ export function InsightCart({
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
             >
-              <h3>앗! 보고서가 만들어지지 않았어요</h3>
+              <h3>앗! 엑셀 파일이 만들어지지 않았어요</h3>
               <p>다시 시도해 주세요.</p>
 
               <button
