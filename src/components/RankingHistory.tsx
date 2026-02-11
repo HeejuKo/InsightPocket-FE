@@ -181,7 +181,7 @@ export function RankingHistory({
   const selectedProductData = products.find(
     (p) => p.productId === selectedProduct
   );
-  const selectedProductId = selectedProduct;
+  const selectedProductId = selectedProduct ?? undefined;
   const selectedProductName = selectedProductData?.name || "";
   const selectedProductStyle = selectedProductData?.style || "";
   const PERIOD_TO_RANGE_MAP: Record<PeriodType, RankRange> = {
@@ -340,7 +340,7 @@ export function RankingHistory({
 
                 addToCart({
                   type: "table",
-                  title: `아마존 ${categoryConfigs[selectedCategory].label} 베스트셀러 순위`,
+                  title: `아마존 ${categoryConfigs[selectedCategory].label} 베스트 셀러 순위`,
                   data: filteredRankings.slice(0, 30),
                   page: "ranking",
                   uniqueKey: rankingTableKey,
@@ -447,6 +447,7 @@ export function RankingHistory({
                 page: "ranking",
                 uniqueKey: `ranking-chart-${selectedProduct}-${period}`,
                 meta: {
+                  kind: "ranking-chart-trend",
                   productId: selectedProductId,
                   range: PERIOD_TO_RANK_RANGE[period],
                   period,

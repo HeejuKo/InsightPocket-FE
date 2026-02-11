@@ -127,7 +127,7 @@ export async function buildExcelSheetData(
                 try {
                 const res = await fetchCurrentRanking(categoryId);
                 const result = res?.result ?? res;
-                
+
                 snapshotTime = result?.snapshot_time ?? null;
                 rows = res?.result?.items ?? rows;
                 } catch {
@@ -185,7 +185,6 @@ export async function buildExcelSheetData(
             return [
                 [title],
                 ["기간", (item.meta as any)?.period ?? "-"],
-                ["range", (item.meta as any)?.range ?? "-"],
                 ["생성 시각", new Date().toLocaleString("ko-KR")],
                 [],
                 ["날짜", "전체 카테고리", "전체 순위", "선택 카테고리", "카테고리 순위"],

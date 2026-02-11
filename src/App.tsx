@@ -7,6 +7,7 @@ import { AIInsights } from './components/AIInsights';
 import { KeywordAnalysis } from './components/KeywordAnalysis';
 import { InsightCart } from './components/InsightCart';
 import type { CategoryCode } from "./components/RankingHistory";
+import type { RankRange } from "./components/RankingHistory";
 
 const CART_STORAGE_KEY = "insight-pocket-cart-v1";
 
@@ -17,8 +18,8 @@ export interface InsightMeta {
   month?: string;
 
   productId?: number;
-  range?: string;
-  period?: string;
+  range?: RankRange;
+  period?: "weekly" | "monthly" | "yearly";
   productName?: string;
 
   categoryCode?: CategoryCode;
