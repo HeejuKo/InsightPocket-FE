@@ -6,6 +6,7 @@ import { ReviewAnalysis } from './components/ReviewAnalysis';
 import { AIInsights } from './components/AIInsights';
 import { KeywordAnalysis } from './components/KeywordAnalysis';
 import { InsightCart } from './components/InsightCart';
+import type { CategoryCode } from "./components/RankingHistory";
 
 const CART_STORAGE_KEY = "insight-pocket-cart-v1";
 
@@ -14,8 +15,14 @@ export type PageType = 'dashboard' | 'ranking' | 'review-analysis' | 'ai-insight
 export interface InsightMeta {
   kind: string;
   month?: string;
+
   productId?: number;
   range?: string;
+  period?: string;
+  productName?: string;
+
+  categoryCode?: CategoryCode;
+  categoryId?: number;
 }
 
 export interface InsightItem {

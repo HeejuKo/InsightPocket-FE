@@ -335,15 +335,22 @@ export function RankingHistory({
             </div>
 
             <AddToCartButton
-              onAdd={() =>
+              onAdd={() => {
+                const categoryId = CATEGORY_MAP[selectedCategory];
+
                 addToCart({
                   type: "table",
                   title: `아마존 ${categoryConfigs[selectedCategory].label} 베스트셀러 순위`,
-                  data: null,
+                  data: filteredRankings.slice(0, 30),
                   page: "ranking",
                   uniqueKey: rankingTableKey,
-                })
-              }
+                  meta: {
+                    kind: "ranking-table-current",
+                    categoryCode: selectedCategory,
+                    categoryId,
+                  },
+                });
+              }}
               onRemove={() => removeByUniqueKey(rankingTableKey)}
               isInCart={isInCart(rankingTableKey)}
             />
@@ -442,6 +449,8 @@ export function RankingHistory({
                 meta: {
                   productId: selectedProductId,
                   range: PERIOD_TO_RANK_RANGE[period],
+                  period,
+                  productName: selectedProductName,
                 },
               })
             }

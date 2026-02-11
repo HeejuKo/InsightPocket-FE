@@ -3,6 +3,8 @@ import {
   fetchTop1BestSellerAIContext,
   fetchRisingProductItemAIContext,
 } from "../../api/dashboard";
+import { fetchCurrentRanking } from "../../api/rankings";
+import { CATEGORY_MAP } from "../../components/RankingHistory"; 
 
 export async function buildExcelSheetData(
   item: InsightItem
@@ -107,6 +109,92 @@ export async function buildExcelSheetData(
                     formatRankChange(
                         r?.rankChange ?? r?.rank_change
                     ),
+                ]),
+            ];
+        }
+
+        case "ranking-table-current": {
+            const categoryCode = (item.meta as any)?.categoryCode as keyof typeof CATEGORY_MAP | undefined;
+            const categoryId =
+                (item.meta as any)?.categoryId ??
+                (categoryCode ? CATEGORY_MAP[categoryCode] : undefined);
+
+            // meta 없으면 item.data fallback
+            let rows: any[] = Array.isArray(item.data) ? item.data : [];
+            let snapshotTime: string | null = null;
+
+            if (categoryId) {
+                try {
+                const res = await fetchCurrentRanking(categoryId);
+                const result = res?.result ?? res;
+                
+                snapshotTime = result?.snapshot_time ?? null;
+                rows = res?.result?.items ?? rows;
+                } catch {
+                    rows = Array.isArray(item.data) ? item.data : [];
+                }
+            }
+
+            const categoryLabelMap: Record<string, string> = {
+                all_beauty: "전체",
+                lip_care: "립 케어",
+                skin_care: "스킨 케어",
+                lip_makeup: "립 메이크업",
+                face_powder: "페이스 파우더",
+            };
+
+            const categoryLabel = categoryCode ? (categoryLabelMap[categoryCode] ?? categoryCode) : "-";
+
+            const formatChange = (v: any) => {
+                if (typeof v !== "number") return "-";
+                if (v > 0) return `+${v}`;
+                if (v < 0) return `-${Math.abs(v)}`;
+                return "-"; // 0은 UI처럼 '-'로
+            };
+
+            const formatPrevRank = (v: any) =>
+                typeof v === "number" ? `${v}위` : "-";
+
+            return [
+                ["실시간 아마존 현재 순위"],
+                ["카테고리", categoryLabel],
+                ["스냅샷 시각", snapshotTime ?? "-"],
+                ["생성 시각", new Date().toLocaleString("ko-KR")],
+                [],
+                ["순위", "브랜드", "제품명", "이전 순위", "변동"],
+                ...rows.slice(0, 30).map((r: any) => {
+                const brand = r?.product_name?.split(" ")?.[0] ?? "-";
+                return [
+                    r?.rank ?? "-",
+                    brand,
+                    r?.product_name ?? "-",
+                    formatPrevRank(r?.prev_rank),
+                    formatChange(r?.rank_change),
+                ];
+                }),
+            ];
+        }
+
+        case "ranking-chart-trend": {
+            const rows = Array.isArray(item.data) ? item.data : [];
+
+            const title = item.title || "LANEIGE 제품 순위 변동 추이";
+
+            if (rows.length === 0) return [[title], [], ["데이터 없음"]];
+
+            return [
+                [title],
+                ["기간", (item.meta as any)?.period ?? "-"],
+                ["range", (item.meta as any)?.range ?? "-"],
+                ["생성 시각", new Date().toLocaleString("ko-KR")],
+                [],
+                ["날짜", "전체 카테고리", "전체 순위", "선택 카테고리", "카테고리 순위"],
+                ...rows.map((r: any) => [
+                r?.date ?? "-",
+                r?.overallCategory ?? "-",
+                r?.overallRank ?? "-",
+                r?.categoryCategory ?? "-",
+                r?.categoryRank ?? "-",
                 ]),
             ];
         }
