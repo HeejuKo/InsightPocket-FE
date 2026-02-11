@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "motion/react";
 import type { InsightItem } from "../App";
 import * as XLSX from "xlsx";
 
+import { PAGE_LABEL_MAP, ITEM_TYPE_LABEL_MAP } from "../utils/label";
+import { formatExcelTimestamp } from "../utils/date";
+
 import { InsightCartItem } from "./InsightCartItem";
 import { InsightCartLoading } from "./InsightCartLoading";
 
@@ -73,14 +76,14 @@ export function InsightCart({
 
       /* ===== Summary ===== */
       const summaryData = [
-        ["LANEIGE Amazon Analytics Report"],
+        ["LANEIGE Amazon 데이터 분석 자료"],
         ["Generated:", new Date().toLocaleString("ko-KR")],
-        ["Total Items:", selectedItems.length],
+        ["Total Cards:", selectedItems.length],
         [""],
-        ["Page", "Item Type", "Title", "Added Time"],
+        ["Page", "Card Type", "Title", "Added Time"],
         ...selectedItems.map((item) => [
-          item.page,
-          item.type,
+          PAGE_LABEL_MAP[item.page] ?? item.page,
+          ITEM_TYPE_LABEL_MAP[item.type] ?? item.type,
           item.title,
           item.timestamp.toLocaleString("ko-KR"),
         ]),
@@ -119,12 +122,13 @@ export function InsightCart({
         XLSX.utils.book_append_sheet(
           wb,
           XLSX.utils.aoa_to_sheet(data),
-          `Item_${idx + 1}`
+          `Card_${idx + 1}`
         );
       });
 
       /* ===== 파일 저장 ===== */
-      XLSX.writeFile(wb, `LANEIGE_Insights_${Date.now()}.xlsx`);
+      const timestamp = formatExcelTimestamp();
+      XLSX.writeFile(wb, `LANEIGE_Insights_${timestamp}.xlsx`);
 
       clearTimeout(timeoutId);
 
@@ -182,7 +186,7 @@ export function InsightCart({
                   </button>
                 </div>
                 <p className="ic-header__desc">
-                  {items.length}개의 인사이트가 담겨 있습니다
+                  {items.length}개의 인사이트가 담겨 있습니다.
                 </p>
               </header>
 
@@ -215,7 +219,7 @@ export function InsightCart({
               {/* ===== Item List ===== */}
               <section className="ic-list">
                 {items.length === 0 ? (
-                  <div className="ic-empty">담긴 인사이트가 없습니다</div>
+                  <div className="ic-empty">담긴 인사이트가 없습니다.</div>
                 ) : (
                   items.map((item) => (
                     <InsightCartItem
