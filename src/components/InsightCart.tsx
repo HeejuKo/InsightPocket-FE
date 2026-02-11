@@ -238,7 +238,7 @@ export function InsightCart({
                     onClick={generateExcel}
                   >
                     <img src={docsIcon} alt="" className="ic-btn__icon" />
-                    엑셀 자동 저장 ({selectedItems.length}개)
+                    엑셀 파일 다운로드 ({selectedItems.length})
                   </button>
 
                   <button
