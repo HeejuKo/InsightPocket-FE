@@ -10,6 +10,23 @@ export async function buildExcelSheetData(
     const kind = item.meta?.kind ?? item.uniqueKey;
 
     switch (kind) {
+        case "dashboard-stat-sales": {
+            return [
+                ["지난 달 총 판매량"],
+                ["값", item.data?.value ?? "-"],
+                ["변화", item.data?.change ?? "-"],
+                ["추세", item.data?.trend ?? "-"],
+            ];
+            }
+
+        case "dashboard-stat-revenue": {
+            return [
+                ["지난 달 매출액"],
+                ["값", item.data?.value ?? "-"],
+                ["변화", item.data?.change ?? "-"],
+                ["추세", item.data?.trend ?? "-"],
+            ];
+            }
         case "dashboard-product-of-month": {
             const res = await fetchTop1BestSellerAIContext(item.meta?.month);
             const it = res?.result?.item ?? res?.item ?? res;

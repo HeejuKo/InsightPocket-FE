@@ -221,6 +221,7 @@ export function Dashboard({
           icon={Package}
           trend="up"
           uniqueKey="dashboard-stat-sales"
+          month={month}
           addToCart={addToCart}
           removeByUniqueKey={removeByUniqueKey}
           isInCart={isInCart}
@@ -232,6 +233,7 @@ export function Dashboard({
           icon={DollarSign}
           trend="up"
           uniqueKey="dashboard-stat-revenue"
+          month={month}
           addToCart={addToCart}
           removeByUniqueKey={removeByUniqueKey}
           isInCart={isInCart}
@@ -286,6 +288,9 @@ export function Dashboard({
                   data: salesData,
                   page: "dashboard",
                   uniqueKey: "dashboard-chart-monthly-sales",
+                  meta: {
+                    kind: uniqueKey, month,
+                  }
                 })
               }
               onRemove={() =>
