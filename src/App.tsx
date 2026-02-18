@@ -14,6 +14,7 @@ import type { RankRange } from "./components/RankingHistory";
 import type { ChatMessage } from "./types/chat";
 
 const CART_STORAGE_KEY = "insight-pocket-cart-v1";
+const CHAT_STORAGE_KEY = "insight-pocket-chat-v1";
 const INITIAL_CHAT_MESSAGE: ChatMessage = {
   id: "init",
   role: "assistant",
@@ -76,9 +77,32 @@ export default function App() {
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMiniChatOpen, setIsMiniChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    INITIAL_CHAT_MESSAGE,
-  ]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => {
+    try {
+      const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (!raw) return [INITIAL_CHAT_MESSAGE];
+
+      const parsed = JSON.parse(raw) as ChatMessage[];
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return [INITIAL_CHAT_MESSAGE];
+      }
+
+      return parsed.map((message) => ({
+        ...message,
+        timestamp: new Date(message.timestamp),
+      }));
+    } catch {
+      return [INITIAL_CHAT_MESSAGE];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatMessages));
+    } catch {
+      // 용량/프라이빗 모드 등 예외 무시
+    }
+  }, [chatMessages]);
 
   const addToCart = (item: Omit<InsightItem, 'id' | 'timestamp'>) => {
     const newItem: InsightItem = {
